@@ -84,7 +84,7 @@ def insert_contact_data(meth):
         for _ in range(count):
             sconnect.session.add(
                 ContactData(
-                    Email=f"{self.name_ds.random_choice()} {self.surname_ds.random_choice()}",
+                    Email=f"{self.name_ds.random_choice()}.{self.surname_ds.random_choice()}.{random.randint(100, 10000)}@gmail.com",
                     Phone=f"+380{random.randint(6, 10)}{random.randint(2, 8)}{''.join(random.choices(string.digits, k=7))}",
                     CityId=sconnect.session.query(City.CityId).filter(
                         City.Name == self.city_ds.random_choice()).first()[0]

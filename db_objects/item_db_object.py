@@ -3,6 +3,7 @@ import random
 from data_sources.cities_data_source import CitiesDataSource
 from data_sources.name_data_source import NameDataSource
 from data_sources.quotes_data_source import QuotesDataSource
+from data_sources.subject_data_source import SubjectDataSource
 from data_sources.surname_data_source import SurnameDataSource
 from db_models.db_models import ContactData, Item, User, UserItem, Category
 from db_objects.abstract_db_object import AbstractDbObject
@@ -18,17 +19,19 @@ class ItemDbObject(AbstractDbObject):
         self.surname_ds = SurnameDataSource()
         self.city_ds = CitiesDataSource()
         self.quotes_ds = QuotesDataSource()
+        self.subject_ds = SubjectDataSource()
 
     @insert_contact_data
     def insert_data(self, count: int):
         contact_data = self.db_object.session.query(ContactData.ContactDataId).all()
         users = self.db_object.session.query(User.UserId).all()
-        categories = self.db_object.session.query(Category.CategoryId).all()
+        categories = self.db_object.session.query(Category.CategoryId).filter(Category.ParentCategoryId.isnot(None)).all()
         for i in range(self.users_count):
             items = list()
             for k in range(count):
                 new_item = Item(
                         Name=f"{self.name_ds.random_choice()} {self.surname_ds.random_choice()}",
+                        Subject=self.subject_ds.random_choice(),
                         CategoryId=random.choices(categories, k=1)[0][0],
                         Description=self.quotes_ds.random_choice(),
                         AutoContinue=bool(random.randint(0, 2)),

@@ -45,6 +45,7 @@ class Item(Base):
     __tablename__ = "Item"
     ItemId = Column(Integer, primary_key=True, autoincrement=True)
     Name = Column(String)
+    Subject = Column(String)
     CategoryId = Column(Integer, ForeignKey("Category.CategoryId"))
     Description = Column(String)
     ImageId = Column(Integer, ForeignKey("Image.ImageId"), nullable=True)
