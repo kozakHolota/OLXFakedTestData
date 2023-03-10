@@ -1,6 +1,5 @@
-from typing import Optional
-
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy.dialects.mssql import DATETIMEOFFSET, DATETIME
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -48,10 +47,14 @@ class Item(Base):
     Subject = Column(String)
     CategoryId = Column(Integer, ForeignKey("Category.CategoryId"))
     Description = Column(String)
-    ImageId = Column(Integer, ForeignKey("Image.ImageId"), nullable=True)
     AutoContinue = Column(Boolean)
     ContactDataId = Column(Integer, ForeignKey("ContactData.ContactDataId"))
 
+class ItemImage(Base):
+    __tablename__ = "ItemImage"
+    ItemImageId = Column(Integer, primary_key=True, autoincrement=True)
+    ItemId = Column(Integer, ForeignKey("Item.ItemId"))
+    ImageId = Column(Integer, ForeignKey("Image.ImageId"))
 
 class Requisites(Base):
     __tablename__ = "Requisites"
@@ -66,18 +69,46 @@ class Requisites(Base):
     ContactPersonName = Column(String)
 
 
-class User(Base):
-    __tablename__ = "User"
-    UserId = Column(Integer, primary_key=True, autoincrement=True)
+class AspNetUsers(Base):
+    __tablename__ = "AspNetUsers"
+    Id = Column(String, primary_key=True)
     UserName = Column(String)
-    Password = Column(String)
+    NormalizedUserName = Column(String)
     Email = Column(String)
-    ContactPersonId = Column(Integer, ForeignKey("ContactPerson.ContactPersonId"))
-    RequisitesId = Column(Integer, ForeignKey("Requisites.RequisitesId"))
+    NormalizedEmail = Column(String)
+    EmailConfirmed = Column(Boolean)
+    PasswordHash = Column(String)
+    SecurityStamp = Column(String)
+    ConcurrencyStamp = Column(String)
+    PhoneNumber = Column(String)
+    PhoneNumberConfirmed = Column(String)
+    TwoFactorEnabled = Column(Boolean)
+    LockoutEnd = Column(DATETIMEOFFSET)
+    LockoutEnabled = Column(Boolean)
+    AccessFailedCount = Column(Integer)
 
+
+class UserUnited(Base):
+    __tablename__ = "UserUnited"
+    UnitedUserId = Column(Integer, primary_key=True, autoincrement=True)
+    UserId = Column(Integer, ForeignKey("AspNetUsers.Id"))
+    ContactPersonId = Column(Integer, ForeignKey("ContactPerson.ContactPersonId"))
+    ImageId = Column(Integer, ForeignKey("Image.ImageId"))
+    RequisitesId = Column(Integer, ForeignKey("Requisites.RequisitesId"))
 
 class UserItem(Base):
     __tablename__ = "UserItem"
     UserItemId = Column(Integer, primary_key=True, autoincrement=True)
-    UserId = Column(Integer, ForeignKey("User.UserId"))
+    UserId = Column(Integer, ForeignKey("AspNetUsers.Id"))
     ItemId = Column(Integer, ForeignKey("Item.ItemId"))
+
+class RefreshToken(Base):
+    __tablename__ = "RefreshToken"
+    Id = Column(Integer, primary_key=True, autoincrement=True)
+    UserId = Column(Integer, ForeignKey("AspNetUsers.Id"))
+    Token = Column(String)
+    JwtId = Column(String)
+    IsUsed = Column(Boolean)
+    IsRevoked = Column(Boolean)
+    AddedDate = Column(DATETIME)
+    ExpiryDate = Column(DATETIME)

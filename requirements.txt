@@ -2,3 +2,6 @@ click
 pandas
 SQLAlchemy
 pymssql
+streamlit
+watchdog
+requests

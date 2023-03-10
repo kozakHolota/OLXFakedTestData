@@ -5,16 +5,16 @@ from data_sources.name_data_source import NameDataSource
 from data_sources.quotes_data_source import QuotesDataSource
 from data_sources.subject_data_source import SubjectDataSource
 from data_sources.surname_data_source import SurnameDataSource
-from db_models.db_models import ContactData, Item, User, UserItem, Category
+from db_models.db_models import ContactData, Item, UserItem, Category
 from db_objects.abstract_db_object import AbstractDbObject
 from utils.db_utils import insert_contact_data
 from utils.mssql_connector import MSSQLConnector
 
 
 class ItemDbObject(AbstractDbObject):
-    def __init__(self, db_object: MSSQLConnector, users):
+    def __init__(self, db_object: MSSQLConnector, user_ids: list):
         super().__init__(db_object)
-        self.users_count = users
+        self.user_ids = user_ids
         self.name_ds = NameDataSource()
         self.surname_ds = SurnameDataSource()
         self.city_ds = CitiesDataSource()
@@ -24,11 +24,10 @@ class ItemDbObject(AbstractDbObject):
     @insert_contact_data
     def insert_data(self, count: int):
         contact_data = self.db_object.session.query(ContactData.ContactDataId).all()
-        users = self.db_object.session.query(User.UserId).all()
         categories = self.db_object.session.query(Category.CategoryId).filter(Category.ParentCategoryId.isnot(None)).all()
-        for i in range(self.users_count):
+        for user_id in self.user_ids:
             items = list()
-            for k in range(count):
+            for k in range(int(count)):
                 new_item = Item(
                         Name=f"{self.name_ds.random_choice()} {self.surname_ds.random_choice()}",
                         Subject=self.subject_ds.random_choice(),
@@ -44,23 +43,21 @@ class ItemDbObject(AbstractDbObject):
 
                 items.append(new_item)
 
-            self.commit()
-
-            for k in range(count):
+                self.commit()
                 user_item = UserItem(
-                        UserId=users[i][0],
-                        ItemId=self.query(Item.ItemId).filter(
-                            Item.Name == items[k].Name,
-                            Item.CategoryId == items[k].CategoryId,
-                            Item.Description == items[k].Description,
-                            Item.AutoContinue == items[k].AutoContinue,
-                            Item.ContactDataId == items[k].ContactDataId
-                        ).scalar()
-                    )
+                            UserId=user_id,
+                            ItemId=self.query(Item.ItemId).filter(
+                                Item.Name == new_item.Name,
+                                Item.CategoryId == new_item.CategoryId,
+                                Item.Description == new_item.Description,
+                                Item.AutoContinue == new_item.AutoContinue,
+                                Item.ContactDataId == new_item.ContactDataId
+                            ).scalar()
+                        )
 
                 self.db_object.session.add(
-                    user_item
-                )
+                        user_item
+                    )
 
-            self.commit()
+                self.commit()
             items.clear()
