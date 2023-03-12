@@ -20,3 +20,7 @@ def zip_code():
 
 def bool_rand():
     return bool(random.randint(0, 1))
+
+
+def rand_img(self):
+    return f"/var/tmp/{name(self)}.jpg"

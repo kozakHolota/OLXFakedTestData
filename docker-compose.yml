@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  test_data_inserter:
+    image: olx_faked_test_data_inserter
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8501:8501
+    networks:
+      - olx_relation_network
+
+networks:
+    olx_relation_network:
+      name: olx_relation_network
+      external: true

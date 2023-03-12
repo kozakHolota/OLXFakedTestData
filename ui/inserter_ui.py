@@ -18,7 +18,9 @@ class InserterUi:
         st.header("Insert test data for OLX Faked portal")
         with st.container():
             st.subheader("Database Related Data")
-            self.host = st.text_input("MS SQL Backend host", value="localhost")
+            self.host = st.text_input("MS SQL Backend host", value="backend_db")
+            self.api_host = st.text_input("Host for REST API Service", value="olxfakedbackend")
+            self.api_port = st.number_input("REST API service HTTPS port", value=443)
             self.port = st.number_input("MS SQL Backend port", value=1433)
             self.database = st.text_input("Database Name", value="ShopDb")
             self.user = st.text_input("Database username", value="sa")
@@ -36,6 +38,7 @@ class InserterUi:
 
     def validate_input(self):
         fields = {"host": self.host,
+                  "api host": self.api_host,
                   "port": self.port,
                   "user": self.user,
                   "database": self.database,
@@ -74,7 +77,7 @@ class InserterUi:
 
             with st.spinner("Creating users"):
                 try:
-                    user_ids = UserDbObject(self.mssql_connector, self.default_password).insert_data(self.users_amount)
+                    user_ids = UserDbObject(self.mssql_connector, self.api_host, self.api_port, self.default_password).insert_data(self.users_amount)
                 except Exception as e:
                     st.error("User creation error: " + str(e), icon="🚨")
                     raise e

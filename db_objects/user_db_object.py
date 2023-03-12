@@ -8,8 +8,10 @@ from utils.mssql_connector import MSSQLConnector
 
 
 class UserDbObject(AbstractDbObject):
-    def __init__(self, db_object: MSSQLConnector, default_user_password: str):
+    def __init__(self, db_object: MSSQLConnector, api_host, api_port, default_user_password: str):
         super().__init__(db_object)
+        self.api_port = api_port
+        self.api_host = api_host
         self.default_user_password = default_user_password
         self.name_ds = NameDataSource()
         self.surname_ds = SurnameDataSource()

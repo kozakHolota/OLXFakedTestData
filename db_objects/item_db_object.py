@@ -5,10 +5,11 @@ from data_sources.name_data_source import NameDataSource
 from data_sources.quotes_data_source import QuotesDataSource
 from data_sources.subject_data_source import SubjectDataSource
 from data_sources.surname_data_source import SurnameDataSource
-from db_models.db_models import ContactData, Item, UserItem, Category
+from db_models.db_models import ContactData, Item, UserItem, Category, Image, ItemImage
 from db_objects.abstract_db_object import AbstractDbObject
 from utils.db_utils import insert_contact_data
 from utils.mssql_connector import MSSQLConnector
+from utils.util import rand_img
 
 
 class ItemDbObject(AbstractDbObject):
@@ -44,20 +45,33 @@ class ItemDbObject(AbstractDbObject):
                 items.append(new_item)
 
                 self.commit()
-                user_item = UserItem(
-                            UserId=user_id,
-                            ItemId=self.query(Item.ItemId).filter(
+
+                item_id = self.query(Item.ItemId).filter(
                                 Item.Name == new_item.Name,
                                 Item.CategoryId == new_item.CategoryId,
                                 Item.Description == new_item.Description,
                                 Item.AutoContinue == new_item.AutoContinue,
                                 Item.ContactDataId == new_item.ContactDataId
                             ).scalar()
+
+                for _ in range(3):
+                    image = Image(Path=rand_img(self))
+                    self.db_object.session.add(image)
+                    self.commit()
+
+                    image_id = self.query(Image.ImageId).filter(Image.Path == image.Path)
+                    self.db_object.session.add(ItemImage(ItemId=item_id, ImageId=image_id))
+                    self.commit()
+
+
+
+                self.commit()
+                user_item = UserItem(
+                            UserId=user_id,
+                            ItemId=item_id
                         )
 
-                self.db_object.session.add(
-                        user_item
-                    )
+                self.db_object.session.add(user_item)
 
                 self.commit()
             items.clear()
