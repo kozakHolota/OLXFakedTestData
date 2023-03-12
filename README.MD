@@ -1,50 +1,25 @@
 # Pre-requisites
-## Python installation
-Install *Python* from the [official page](https://www.python.org/downloads/). Make sure that during the installation *Python* is added to the *PATH* system variable. That *Windows* users will be asked during the installation process.
+To deploy the application we need next things to be installed:
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-## Virtual Environment installation
-Use *Virtual Environment* only if you use *Python* for the regular development. Miss the instructions related to it otherwise.
-In the *Terminal* (**Linux** or **MacOS X**) or *Powershell* (**Windoes OS**) type:
+# Installation
+## Build Docker Container
+Inside _Project Root_ folder run in the _Terminal_:
 
 ```shell
-pip install virtualenv
+docker compose build
 ```
 
-## Install the dependencies
-
-### Create Virtual Environment
-If you use *Virtual Environment*, activate it in the *Terminal* (**Linux** or **MacOS X**) or *Powershell* (**Windoes OS**):
+## Start Docker Container
+Inside _Project Root_ folder run in the _Terminal_:
 
 ```shell
-virtualenv my_virtual_environment
-```
-### Activate Virtual Environment
-
-**Linux or Mac OS X**
-```shell
-. my_virtual_environment/bin/activate
-```
-
-**Windows OS**
-```shell
-my_virtual_environment\Scripts\activate.PS2
-```
-
-### Install the dependencies
-Inside the project root type in the *Terminal*:
-```shell
-pip install -r requirements.txt
+docker compose up -d
 ```
 
 # Create the test data
-## Command execution
-To fill the *DB*, Database server must be running. How to activate is, see *README.MD* in [OLXFakedBackend](https://github.com/kozakHolota/OLXFakedBackend) project.
-
-Inside the *Project Root* folder execute command:
-
-```shell
-streamlit run ./main_ui.py
-```
+## Access the UI
+In _Web Browser_ navigate to the address: [http://localhost:8501](http://localhost:8501)
 
 ## Personalize Test Data Generation
 After command is started you should see in ghe browser _Web UI_ like this:
@@ -52,8 +27,10 @@ After command is started you should see in ghe browser _Web UI_ like this:
 ![Test Data Inserter Web UI](img/web_ui.png "Test Data Inserter Web UI")
 
 ### Fields meaning
-- *MS SQL Backend host* - Database host (in most cases *localhost*)
+- *MS SQL Backend host* - Database host
+- *Host for REST API Service* - *OLX Faked Backend* *REST API* host
 - *MS SQL Backend port* - *MS SQL Server* user name
+- *REST API service HTTPS port* - *OLX Faked Backend* *REST API* host port
 - *Database Name* - *MS SQL Server* user password
 - *Database username* - Database to use
 - *Database password* - How many users to create
