@@ -1,7 +1,11 @@
 click
+opencv-python
 pandas
 SQLAlchemy
 pymssql
+openai
 streamlit
 watchdog
+asyncio
+aiohttp
 requests

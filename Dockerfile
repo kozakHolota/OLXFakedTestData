@@ -6,4 +6,4 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN python setup.py install
-CMD [ "streamlit", "run", "./main_ui.py" ]
+CMD [ "streamlit", "run", "./main.py" ]
